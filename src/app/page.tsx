@@ -1,99 +1,107 @@
-import Image from "next/image";
+import { Codepen, Github, Linkedin, Mail } from "lucide-react";
+import BentoCard from "./components/BentoCard";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="grid grid-rows-1 items-center justify-items-center min-h-screen p-8 pb-16 gap-16 sm:p-16">
+      <main className="flex flex-col gap-8 row-start-2 items-start md:items-center justify-items-center max-w-5xl">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+          <div className="flex flex-col gap-6">
+            <h1 className="text-5xl leading-[0.95] font-bold lg:text-6xl text-slate-700">
+              I&apos;m Harry
+              <br /> — Designer
+              <br /> &amp; Developer
+            </h1>
+            <div className="max-w-[500px]">
+              <p className="text-lg text-left text-slate-500">
+                Currently working at Confident LIMS helping to concept and
+                design amazing products. Simple and easy to use tools that
+                enhance the way laboratories test.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-1 flex-col md:items-end shrink-0">
+            <p className="md:text-end">
+              <span className="text-slate-400">Working Remotely from</span>
+              <br /> Foster City, CA
+            </p>
+          </div>
+        </section>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+        <section id="work" className="grid grid-cols-1 w-full">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-6 lg:grid-rows-2">
+            <BentoCard
+              href="/projects/confident-lims"
+              title="Confident LIMS"
+              overline="WORK"
+              description="Currently working at Confident LIMS helping to concept and
+                  design amazing products. Simple and easy to use tools that
+                  enhance the way laboratories test."
+              size={4}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+            <BentoCard
+              href="/projects/confident-connect"
+              title="Connect"
+              overline="WORK"
+              description="A WebGL 3D data-viz tool."
+            />
+            <BentoCard
+              href="/projects/wonderwall"
+              title="Wonderwall"
+              overline="PLAY"
+              description="A workplace productivity tool."
+            />
+            <BentoCard
+              href="/projects/gen-art"
+              title="Generative Art"
+              overline="PLAY"
+              description="Generative Art."
+            />
+            <BentoCard
+              href="/projects/gen-art"
+              title="Lander"
+              overline="PLAY"
+              description="A WebGL 'lunar-lander' style game."
+            />
+          </div>
+        </section>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href="https://www.linkedin.com/in/harrybellenie/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
+          <Linkedin size={16} />
+          LinkedIn
         </a>
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href="https://github.com/KN3LL2K"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
+          <Github size={16} />
+          GitHub
         </a>
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href="https://codepen.io/KN3LL"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
+          <Codepen size={16} />
+          Codepen
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="mailto:harrybellenie@gmail.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Mail size={16} />
+          Email
         </a>
       </footer>
     </div>
