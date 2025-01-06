@@ -15,7 +15,7 @@ export default function ProjectImage({
   src,
   alt,
   caption,
-  className = "rounded-xl shadow-sm",
+  className = "rounded-xl shadow-md",
   ...rest
 }: ProjectImageProps) {
   return (

@@ -34,22 +34,26 @@ export default function ProjectPage() {
           to your questions about what your teams have been working on.
         </p>
       </ContentSection>
-      <ProjectImage
-        src={openaiPrototype}
-        alt={"UI for openAI prototype"}
-        caption={"Q&A interface"}
-      />
+      <div className="px-12 md:px-16 lg:px-56">
+        <ProjectImage
+          src={openaiPrototype}
+          alt={"UI for openAI prototype"}
+          caption={"Q&A interface"}
+        />
+      </div>
       <ContentSection>
         <Subheader>Rich Text Support</Subheader>
         <p>
           Built rich text input with support for tagging users and projects.
         </p>
       </ContentSection>
-      <ProjectImage
-        src={richTextInput}
-        alt={"Rich text input"}
-        caption={"Rich text editing"}
-      />
+      <div className="px-12 md:px-16 lg:px-56">
+        <ProjectImage
+          src={richTextInput}
+          alt={"Rich text input"}
+          caption={"Rich text editing"}
+        />
+      </div>
     </>
   );
 }

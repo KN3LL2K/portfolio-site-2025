@@ -17,15 +17,17 @@ export default function Home() {
             </h1>
             <div className="max-w-[500px]">
               <p className="text-lg text-left text-slate-500">
-                Currently working at Confident LIMS helping to concept and
-                design amazing products. Simple and easy to use tools that
-                enhance the way laboratories test.
+                I&apos;m passionate about the intersection of art &amp;
+                technology, and using my skills in both to create products that
+                are a joy to use.
+                {/* When I&apos;m not working you can find me
+                making art, music, or playing video games. */}
               </p>
             </div>
           </div>
           <div className="flex flex-1 flex-col md:items-end shrink-0 h-full gap-16">
             <div className="hidden md:flex flex-1 justify-self-start text-blue-600">
-              <Waves size={48} />
+              <Waves size={64} />
             </div>
             <p className="md:text-end">
               <span className="text-slate-400">Working Remotely from</span>
