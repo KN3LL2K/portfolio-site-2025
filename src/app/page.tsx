@@ -1,4 +1,4 @@
-import { Codepen, Github, Linkedin, Mail } from "lucide-react";
+import { Codepen, Github, Linkedin, Mail, Waves } from "lucide-react";
 import BentoCard from "./components/BentoCard";
 
 export default function Home() {
@@ -7,7 +7,10 @@ export default function Home() {
       <main className="flex flex-col gap-8 row-start-2 items-start md:items-center justify-items-center max-w-5xl">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
           <div className="flex flex-col gap-6">
-            <h1 className="text-5xl leading-[0.95] font-bold lg:text-6xl text-slate-700">
+            <div className="flex md:hidden text-blue-600">
+              <Waves size={48} />
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl leading-[0.95] font-bold lg:text-6xl text-slate-700">
               I&apos;m Harry
               <br /> — Designer
               <br /> &amp; Developer
@@ -20,23 +23,23 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="flex flex-1 flex-col md:items-end shrink-0">
+          <div className="flex flex-1 flex-col md:items-end shrink-0 h-full gap-16">
+            <div className="hidden md:flex flex-1 justify-self-start text-blue-600">
+              <Waves size={48} />
+            </div>
             <p className="md:text-end">
               <span className="text-slate-400">Working Remotely from</span>
               <br /> Foster City, CA
             </p>
           </div>
         </section>
-
         <section id="work" className="grid grid-cols-1 w-full">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-6 lg:grid-rows-2">
             <BentoCard
               href="/projects/confident-lims"
               title="Confident LIMS"
               overline="WORK"
-              description="Currently working at Confident LIMS helping to concept and
-                  design amazing products. Simple and easy to use tools that
-                  enhance the way laboratories test."
+              description="Laboratory Information Management System."
               size={4}
             />
             <BentoCard
@@ -53,12 +56,12 @@ export default function Home() {
             />
             <BentoCard
               href="/projects/gen-art"
-              title="Generative Art"
+              title="Flow Fields"
               overline="PLAY"
-              description="Generative Art."
+              description="Generative art."
             />
             <BentoCard
-              href="/projects/gen-art"
+              href="/projects/lander"
               title="Lander"
               overline="PLAY"
               description="A WebGL 'lunar-lander' style game."

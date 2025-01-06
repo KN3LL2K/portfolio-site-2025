@@ -2,13 +2,14 @@ import ContentSection from "@/app/components/ContentSection";
 import Header from "@/app/components/Header";
 import ProjectImage from "@/app/components/ProjectImage";
 import Subheader from "@/app/components/Subheader";
-import connectResponsiveImage from "../../../../public/images/connect-responsive.png";
+import connectResponsiveImage from "../../../../public/images/connect/connect-responsive.png";
 
 export default function ProjectPage() {
   return (
     <>
       <ContentSection>
         <Header>Confident LIMS</Header>
+        <span className="text-sm text-slate-400">PRODUCT DESIGN · UI/UX DESIGN · DEVELOPMENT</span>
         <p>
           <a
             className="text-blue-700 underline"

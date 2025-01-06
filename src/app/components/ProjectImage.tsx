@@ -8,6 +8,7 @@ export interface ProjectImageProps {
   alt: string;
   caption: string;
   className?: string;
+  unoptimized?: boolean
 }
 
 export default function ProjectImage({

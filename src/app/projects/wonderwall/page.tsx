@@ -2,13 +2,15 @@ import ContentSection from "@/app/components/ContentSection";
 import Header from "@/app/components/Header";
 import ProjectImage from "@/app/components/ProjectImage";
 import Subheader from "@/app/components/Subheader";
-import connectResponsiveImage from "../../../../public/images/connect-responsive.png";
+import openaiPrototype from "../../../../public/images/wonderwall/openai-prototype.png";
+import richTextInput from "../../../../public/images/wonderwall/rich-text-input.png";
 
 export default function ProjectPage() {
   return (
     <>
       <ContentSection>
         <Header>Wonderwall</Header>
+        <span className="text-sm text-slate-400">DEVELOPMENT</span>
         <p>
           <a
             className="text-blue-700 underline"
@@ -17,31 +19,37 @@ export default function ProjectPage() {
           >
             Wonderwall
           </a>{" "}
-          provides tools for analytical testing labs and their clients,
-          primarily a Laboratory Information Management System.
+          is a new approach to tackling measuring work productivity. Post your
+          wins daily and keep track of what you&apos;ve accomplished.
         </p>
         <p>
-          My role involved designing and building the UI. I also contributed to
-          the WebGL visualization.
+          My role involved building portions of the UI, and building out a
+          ChatGPT integration using pinecone.
         </p>
       </ContentSection>
       <ContentSection>
-        <Subheader>OpenAI</Subheader>
+        <Subheader>ChatGPT</Subheader>
         <p>
-          Migrated codebase from Angular.js to React with Typescript to improve
-          code maintainability, developer experience and efficiency.
+          Prototyped a Q&A tool for summarizing data. Get easy-to-digest answers
+          to your questions about what your teams have been working on.
         </p>
       </ContentSection>
       <ProjectImage
-        className=""
-        src={connectResponsiveImage}
-        alt={"Connect web-app desktop and mobile views"}
-        caption={"Responsive Layout"}
+        src={openaiPrototype}
+        alt={"UI for openAI prototype"}
+        caption={"Q&A interface"}
       />
       <ContentSection>
         <Subheader>Rich Text Support</Subheader>
-        <p>Lorem ipsum</p>
+        <p>
+          Built rich text input with support for tagging users and projects.
+        </p>
       </ContentSection>
+      <ProjectImage
+        src={richTextInput}
+        alt={"Rich text input"}
+        caption={"Rich text editing"}
+      />
     </>
   );
 }

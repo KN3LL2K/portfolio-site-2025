@@ -1,15 +1,17 @@
 import ContentSection from "@/app/components/ContentSection";
 import Header from "@/app/components/Header";
 import ProjectImage from "@/app/components/ProjectImage";
-import connectBookmarksImage from "../../../../public/images/connect-responsive-bookmarks.png";
-import connectSearchImage from "../../../../public/images/connect-responsive-search.png";
-import connectResponsiveImage from "../../../../public/images/connect-responsive.png";
+import connectBookmarksImage from "../../../../public/images/connect/connect-responsive-bookmarks.png";
+import connectSearchImage from "../../../../public/images/connect/connect-responsive-search.png";
+import connectResponsiveImage from "../../../../public/images/connect/connect-responsive.png";
 
 export default function ProjectPage() {
   return (
     <>
       <ContentSection>
         <Header>Connect - Confident LIMS</Header>
+        {/* <span className="text-sm text-slate-500">UI Designer · Developer</span> */}
+        <span className="text-sm text-slate-400">UI/UX DESIGN · DEVELOPMENT · DATA VISUALIZATION</span>
         <p>
           <a
             className="text-blue-700 underline"
