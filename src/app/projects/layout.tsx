@@ -1,6 +1,7 @@
 import React from "react";
 import BackLink from "../components/BackLink";
 import { Waves } from "lucide-react";
+import Footer from "../components/Footer";
 
 export default function ProjectsLayout({
   children,
@@ -21,6 +22,7 @@ export default function ProjectsLayout({
       <main className="flex flex-col gap-8 row-start-2 items-start justify-items-center max-w-5xl">
         {children}
       </main>
+        <Footer />
     </div>
   );
 }

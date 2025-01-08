@@ -1,5 +1,14 @@
-import { Codepen, Github, Linkedin, Mail, Waves } from "lucide-react";
+"use client";
+import { Waves } from "lucide-react";
 import BentoCard from "./components/BentoCard";
+// import Canvas from "./components/Canvas";
+import Footer from "./components/Footer";
+import dynamic from 'next/dynamic'
+
+const Canvas = dynamic(
+  () => import('./components/Canvas'),
+  { ssr: false }
+)
 
 export default function Home() {
   return (
@@ -25,8 +34,11 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="flex flex-1 flex-col md:items-end shrink-0 h-full gap-16">
-            <div className="hidden md:flex flex-1 justify-self-start text-blue-600">
+          <div className="flex flex-1 flex-col md:items-end shrink-0 h-full gap-2">
+            <div className="hidden lg:flex flex-1 lg:pb-6 w-full justify-self-start">
+              <Canvas />
+            </div>
+            <div className="hidden md:flex lg:hidden flex-1 justify-self-start text-blue-600">
               <Waves size={64} />
             </div>
             <p className="md:text-end">
@@ -71,44 +83,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://www.linkedin.com/in/harrybellenie/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Linkedin size={16} />
-          LinkedIn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://github.com/KN3LL2K"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Github size={16} />
-          GitHub
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://codepen.io/KN3LL"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Codepen size={16} />
-          Codepen
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="mailto:harrybellenie@gmail.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Mail size={16} />
-          Email
-        </a>
-      </footer>
+      <Footer />
     </div>
   );
 }
