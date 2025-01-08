@@ -34,12 +34,14 @@ function angleLerp(a0: number, a1: number, t: number) {
 
 export class Grid {
 
-  p5: { noise: (x: number, y: number) => number }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  p5: any
   numColumns: number
   numRows: number
   grid: number[][]
   cellSize: number = 0
-  constructor(height: number, width: number, cellSize: number, p5: { noise: (x: number, y: number) => number }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(height: number, width: number, cellSize: number, p5: any) {
     Object.assign(this, { height, width, cellSize });
     this.p5 = p5
     this.numColumns = Math.round(width / cellSize);
@@ -99,10 +101,8 @@ export class Grid {
   }
   update(noiseScale: number, angleScale: number) {
     this.crawl((r, c) => {
-      // const angle = (r / this.numRows) * Math.PI;
       const angle =
         this.p5.noise(c * noiseScale, r * noiseScale) * Math.PI * angleScale;
-        // this.p5.noise(c * noiseScale, r * noiseScale) * 0.125 * (180 / Math.PI) * angleScale;
       this.setCell(r, c, angle);
     });
   }
