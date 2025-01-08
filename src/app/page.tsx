@@ -12,8 +12,8 @@ const Canvas = dynamic(
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-1 items-center justify-items-center min-h-screen p-8 pb-16 gap-16 sm:p-16">
-      <main className="flex flex-col gap-8 row-start-2 items-start md:items-center justify-items-center max-w-5xl">
+    <div className="grid grid-rows-[1fr_24px] items-center justify-items-center min-h-screen p-8 pb-16 gap-16 sm:p-16">
+      <main className="flex flex-col gap-8 items-start md:items-center justify-items-center max-w-5xl">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
           <div className="flex flex-col gap-6">
             <div className="flex md:hidden text-blue-600">
