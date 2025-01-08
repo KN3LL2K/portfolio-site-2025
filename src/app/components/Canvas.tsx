@@ -19,7 +19,7 @@ const LINE_COUNT = 2048;
 const LINE_WEIGHT = 8;
 
 const NOISE_SCALE = 0.025;
-const SPEED_MODIFIER = 0.25;
+const SPEED_MODIFIER = 0.14;
 
 const COLORS = [
   // [235, 106, 130],
