@@ -8,20 +8,18 @@ export interface CanvasProps {
 }
 
 const debug = false;
-const MAX_HEIGHT = 192; // 128+64
-const MAX_WIDTH = 496; // 560
+const MAX_HEIGHT = 192;
+const MAX_WIDTH = 496;
 const CELL_SIZE = MAX_HEIGHT / 16;
-// const CELL_SIZE = 128 + 64;
 const MARGIN = 40;
 
-const NUM_STEPS = 128; //32
-const STEP_LENGTH = 16; //2
-const LINE_COUNT = 2048; // 1024
+const NUM_STEPS = 128;
+const STEP_LENGTH = 16;
+const LINE_COUNT = 2048;
 const LINE_WEIGHT = 8;
 
 const NOISE_SCALE = 0.025;
-// const NOISE_SCALE = 0.025;
-// const ANGLE_SCALE = 2;
+const SPEED_MODIFIER = 0.5;
 
 const COLORS = [
   // [235, 106, 130],
@@ -67,7 +65,8 @@ export default function Canvas({}: CanvasProps) {
   const instanceRef = useRef<p5>(null);
   const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const angleRef = useRef<number>(0);
-  // const angle = ANGLE_SCALE;
+  const prevAngleRef = useRef<number>(0);
+
   useEffect(() => {
     function updatePosition(e: MouseEvent) {
       const x = e.clientX;
@@ -135,10 +134,15 @@ export default function Canvas({}: CanvasProps) {
 
         sketch.draw = () => {
           sketch.clear();
+          const angle = sketch.lerp(
+            prevAngleRef.current,
+            angleRef.current,
+            0.048 * SPEED_MODIFIER
+          );
+          prevAngleRef.current = angle;
 
-          grid.update(NOISE_SCALE, angleRef.current);
-          // const { x, y } = mouseRef.current;
-          // grid.update(NOISE_SCALE, x, y);
+          grid.update(NOISE_SCALE, angle);
+
           if (debug) {
             grid.debug();
           }
@@ -153,29 +157,23 @@ export default function Canvas({}: CanvasProps) {
             const i = Math.floor(
               sketch.noise(x * NOISE_SCALE, y * NOISE_SCALE) * COLORS.length
             );
-            // const wt = Math.floor(sketch.noise(x * NOISE_SCALE, y * NOISE_SCALE));
             const color = COLORS[i];
             drawCurve(line, LINE_WEIGHT, color);
           });
-
-          // drawLine(x, y, 0.5, 10);
-          // sketch.background(0);
-          // sketch.fill(255);
-          // sketch.rect(x, y, 50, 50);
-          // sketch.clear()
         };
       }, canvasRef.current ?? undefined);
     }
     return () => {
-      // instanceRef.current = null
       window.removeEventListener("mousemove", updatePosition);
     };
   }, []);
-  // useEffect(() => {
-  //   if (instanceRef.current) {
-  //   }
-  // }, [angle]);
-  return <div ref={canvasRef} className="w-full h-full relative rounded-lg overflow-hidden shadow-inner" />;
+
+  return (
+    <div
+      ref={canvasRef}
+      className="w-full h-full relative rounded-lg overflow-hidden shadow-inner"
+    />
+  );
 }
 
 function poissonSampling(n: number, width: number, height: number) {
