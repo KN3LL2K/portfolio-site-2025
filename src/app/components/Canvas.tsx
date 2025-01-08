@@ -127,6 +127,8 @@ export default function Canvas({}: CanvasProps) {
         sketch.setup = () => {
           const dpr = window.devicePixelRatio || 1
           sketch.createCanvas(MAX_WIDTH, MAX_HEIGHT);
+          sketch.canvas.width = MAX_WIDTH * dpr
+          sketch.canvas.height = MAX_HEIGHT * dpr
           sketch.scale(dpr, dpr);
           grid = new Grid(MAX_HEIGHT, MAX_WIDTH, CELL_SIZE, sketch);
           // sketch.noLoop();
