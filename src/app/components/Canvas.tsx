@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import p5 from "p5";
 import { Grid } from "@/scripts/grid";
 import PoissonDiskSampling from "poisson-disk-sampling";
+import { useMediaQuery } from "../useMediaQuery";
 
 export interface CanvasProps {
   className?: string;
@@ -66,6 +67,7 @@ export default function Canvas({}: CanvasProps) {
   const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const angleRef = useRef<number>(0);
   const prevAngleRef = useRef<number>(0);
+  const isDesktop = useMediaQuery("(min-width:1024px)");
 
   useEffect(() => {
     function updatePosition(e: MouseEvent) {
@@ -77,7 +79,7 @@ export default function Canvas({}: CanvasProps) {
       angleRef.current = angle;
     }
     window.addEventListener("mousemove", updatePosition);
-    if (!instanceRef.current) {
+    if (!instanceRef.current && isDesktop) {
       let grid: Grid;
       instanceRef.current = new p5((sketch) => {
         function drawCurve(
@@ -124,8 +126,8 @@ export default function Canvas({}: CanvasProps) {
         }
         let origins: number[][];
         sketch.setup = () => {
-          const dpr = window.devicePixelRatio || 1
-          sketch.pixelDensity(dpr)
+          const dpr = window.devicePixelRatio || 1;
+          sketch.pixelDensity(dpr);
           sketch.createCanvas(MAX_WIDTH, MAX_HEIGHT);
           // sketch.canvas.width = Math.floor(MAX_WIDTH * dpr)
           // sketch.canvas.height = Math.floor(MAX_HEIGHT * dpr)
@@ -166,18 +168,20 @@ export default function Canvas({}: CanvasProps) {
           });
         };
       }, canvasRef.current ?? undefined);
+    } else if (!isDesktop) {
+      instanceRef.current = null;
     }
     return () => {
       window.removeEventListener("mousemove", updatePosition);
     };
-  }, []);
+  }, [isDesktop]);
 
-  return (
+  return isDesktop ? (
     <div
       ref={canvasRef}
       className="w-full h-full relative rounded-lg overflow-hidden shadow-inner"
     />
-  );
+  ) : null;
 }
 
 function poissonSampling(n: number, width: number, height: number) {
