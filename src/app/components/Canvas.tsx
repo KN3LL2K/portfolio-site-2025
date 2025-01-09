@@ -123,13 +123,13 @@ export default function Canvas({}: CanvasProps) {
           return curve;
         }
         let origins: number[][];
-
         sketch.setup = () => {
           const dpr = window.devicePixelRatio || 1
+          sketch.pixelDensity(dpr)
           sketch.createCanvas(MAX_WIDTH, MAX_HEIGHT);
-          sketch.canvas.width = MAX_WIDTH * dpr
-          sketch.canvas.height = MAX_HEIGHT * dpr
-          sketch.scale(dpr, dpr);
+          // sketch.canvas.width = Math.floor(MAX_WIDTH * dpr)
+          // sketch.canvas.height = Math.floor(MAX_HEIGHT * dpr)
+          // sketch.scale(dpr, dpr);
           grid = new Grid(MAX_HEIGHT, MAX_WIDTH, CELL_SIZE, sketch);
           // sketch.noLoop();
           sketch.frameRate(48);
