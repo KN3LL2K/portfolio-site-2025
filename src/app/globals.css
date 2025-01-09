@@ -22,7 +22,7 @@ body {
 }
 
 canvas {
-  transform: scale(1.5);
+  transform: scale(1.75);
   inset: -10px;
   position: absolute;
 }

@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[1fr_24px] items-center justify-items-center min-h-screen p-8 pb-16 gap-16 sm:p-16">
       <main className="flex flex-col gap-8 items-start md:items-center justify-items-center max-w-5xl">
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end w-full">
           <div className="flex flex-col gap-6">
             <div className="flex md:hidden text-blue-600">
               <Waves size={48} />
@@ -25,9 +25,9 @@ export default function Home() {
               <br /> &amp; Developer
             </h1>
             <div className="max-w-[500px]">
-              <p className="text-lg text-left text-slate-500">
+              <p className="text-lg text-left text-slate-500 max-w-md">
                 I&apos;m passionate about the intersection of art &amp;
-                technology, and using my skills in both to create products that
+                technology and using both to create products that
                 are a joy to use.
                 {/* When I&apos;m not working you can find me
                 making art, music, or playing video games. */}
