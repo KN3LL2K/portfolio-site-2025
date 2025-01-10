@@ -1,4 +1,4 @@
-import { Codepen, Github, Linkedin, Mail } from "lucide-react";
+import { Codepen, FileText, Github, Linkedin, Mail } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -38,6 +38,15 @@ export default function Footer() {
       >
         <Mail size={16} />
         Email
+      </a>
+      <a
+        className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+        href="/assets/pdf/HarryBellenieResume.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FileText size={16} />
+        Resume
       </a>
     </footer>
   );
