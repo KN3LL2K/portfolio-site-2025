@@ -10,6 +10,9 @@ export default function ProjectPage() {
     <>
       <ContentSection>
         <Header>Flow Fields</Header>
+        <span className="text-sm text-slate-400">
+          Jan 2022
+        </span>
         <p>
           I like to dabble with all things visual: drawing, painting,
           photography, and sometimes coding generative art. This was a fun

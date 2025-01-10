@@ -16,6 +16,9 @@ export default function ProjectPage() {
         <span className="text-sm text-slate-400">
           DESIGN · DEVELOPMENT · 3D ART
         </span>
+        <span className="text-sm text-slate-400">
+          May 2023 - Today
+        </span>
         <p>
           I wanted to make a game using WebGL and React. This was inspired by
           games like Kerbal Space Program, Lunar Lander, and Highfleet. Try to

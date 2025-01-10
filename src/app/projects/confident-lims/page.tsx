@@ -16,6 +16,9 @@ export default function ProjectPage() {
         <span className="text-sm text-slate-400">
           PRODUCT DESIGN · UI/UX DESIGN · DEVELOPMENT
         </span>
+        <span className="text-sm text-slate-400">
+          May 2022 - Today
+        </span>
         <p>
           <a
             className="text-blue-700 underline"
@@ -28,7 +31,7 @@ export default function ProjectPage() {
           primarily a Laboratory Information Management System.
         </p>
         <p>
-          Since joining the LIMS team in 2020, I have been leading the re-design
+          Since joining the LIMS team in 2022, I have been leading the re-design
           and re-write of the app, improving existing workflows, and adding new
           features that increase productivity and usability.
         </p>

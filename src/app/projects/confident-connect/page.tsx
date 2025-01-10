@@ -10,8 +10,10 @@ export default function ProjectPage() {
     <>
       <ContentSection>
         <Header>Connect - Confident LIMS</Header>
-        {/* <span className="text-sm text-slate-500">UI Designer · Developer</span> */}
         <span className="text-sm text-slate-400">UI/UX DESIGN · DEVELOPMENT · DATA VISUALIZATION</span>
+        <span className="text-sm text-slate-400">
+          May - Sep 2019
+        </span>
         <p>
           <a
             className="text-blue-700 underline"

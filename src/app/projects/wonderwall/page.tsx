@@ -11,6 +11,9 @@ export default function ProjectPage() {
       <ContentSection>
         <Header>Wonderwall</Header>
         <span className="text-sm text-slate-400">DEVELOPMENT</span>
+        <span className="text-sm text-slate-400">
+          Oct 2022 - Jul 2023
+        </span>
         <p>
           <a
             className="text-blue-700 underline"
