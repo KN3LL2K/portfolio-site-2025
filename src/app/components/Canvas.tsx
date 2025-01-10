@@ -169,10 +169,13 @@ export default function Canvas({}: CanvasProps) {
         };
       }, canvasRef.current ?? undefined);
     } else if (!isDesktop) {
-      instanceRef.current = null;
+      instanceRef.current?.remove();
+      instanceRef.current = null
     }
     return () => {
       window.removeEventListener("mousemove", updatePosition);
+      instanceRef.current?.remove()
+      instanceRef.current = null
     };
   }, [isDesktop]);
 
