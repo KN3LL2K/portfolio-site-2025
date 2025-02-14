@@ -22,7 +22,8 @@ body {
 }
 
 canvas {
-  transform: scale(1.75);
-  inset: -10px;
+  /* transform: scale(1.75); */
+  transform: scale(1);
+  /* inset: -10px; */
   position: absolute;
 }

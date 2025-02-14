@@ -14,7 +14,8 @@
     "p5": "^1.11.2",
     "poisson-disk-sampling": "^2.3.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tone": "^15.0.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
