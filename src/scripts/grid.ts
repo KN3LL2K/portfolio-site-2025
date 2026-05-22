@@ -32,13 +32,15 @@ function angleLerp(a0: number, a1: number, t: number) {
   return a0 + shortAngleDist() * t;
 }
 
+type CellValue = { size: number; color: [number,number,number] }
+
 export class Grid {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   p5: any
   numColumns: number
   numRows: number
-  grid: number[][]
+  grid: CellValue[][]
   cellSize: number = 0
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(height: number, width: number, cellSize: number, p5: any) {
@@ -57,7 +59,7 @@ export class Grid {
     }
   }
 
-  setCell(r: number, c: number, value: number) {
+  setCell(r: number, c: number, value: CellValue) {
     if (r < this.numRows && r >= 0 && c < this.numColumns && c >= 0) {
       this.grid[r][c] = value;
     }
@@ -67,17 +69,17 @@ export class Grid {
     return [~~(x / this.cellSize), ~~(y / this.cellSize)];
   }
 
-  getField(x: number, y: number) {
-    const [ix, iy] = this.getCellIndex(x, y);
-    const alphax = (x % this.cellSize) / this.cellSize;
-    const alphay = (y % this.cellSize) / this.cellSize;
+  // getField(x: number, y: number) {
+  //   const [ix, iy] = this.getCellIndex(x, y);
+  //   const alphax = (x % this.cellSize) / this.cellSize;
+  //   const alphay = (y % this.cellSize) / this.cellSize;
 
-    return angleLerp(
-      angleLerp(this.getCell(iy, ix) ?? -1, this.getCell(iy, ix + 1) ?? -1, alphax),
-      angleLerp(this.getCell(iy + 1, ix) ?? -1, this.getCell(iy + 1, ix + 1) ?? -1, alphax),
-      alphay
-    );
-  }
+  //   return angleLerp(
+  //     angleLerp(this.getCell(iy, ix) ?? -1, this.getCell(iy, ix + 1) ?? -1, alphax),
+  //     angleLerp(this.getCell(iy + 1, ix) ?? -1, this.getCell(iy + 1, ix + 1) ?? -1, alphax),
+  //     alphay
+  //   );
+  // }
 
   crawl(cb: (r: number, c: number) => void) {
     for (let r = 0; r < this.numRows; r++) {
@@ -87,36 +89,34 @@ export class Grid {
     }
   }
 
-  _update(noiseScale: number, x: number, y: number) {
-    this.crawl((r, c) => {
-      // const angle = (r / this.numRows) * Math.PI;
-      // const angle =
-      //   this.p5.noise(c * noiseScale, r * noiseScale) * angleScale;
-      const dX = x - (c + 0.5) * this.cellSize;
-      const dY = y - (r + 0.5) * this.cellSize;
+  // _update(noiseScale: number, x: number, y: number) {
+  //   this.crawl((r, c) => {
+  //     // const angle = (r / this.numRows) * Math.PI;
+  //     // const angle =
+  //     //   this.p5.noise(c * noiseScale, r * noiseScale) * angleScale;
+  //     const dX = x - (c + 0.5) * this.cellSize;
+  //     const dY = y - (r + 0.5) * this.cellSize;
 
-      const angle = Math.atan2(dX, dY);
-      this.setCell(r, c, angle);
-    });
-  }
-  update(noiseScale: number, angleScale: number) {
+  //     const angle = Math.atan2(dX, dY);
+  //     this.setCell(r, c, angle);
+  //   });
+  // }
+  update(value: CellValue) {
     this.crawl((r, c) => {
-      const angle =
-        this.p5.noise(c * noiseScale, r * noiseScale) * Math.PI * angleScale;
-      this.setCell(r, c, angle);
+      this.setCell(r, c, value);
     });
   }
 
-  debug() {
-    const ctx = this.p5
-    this.crawl((r, c) => {
-      drawLine(
-        ctx,
-        (c + 0.5) * this.cellSize,
-        (r + 0.5) * this.cellSize,
-        this.getCell(r, c) ?? -1,
-        this.cellSize * 0.5
-      );
-    });
-  }
+  // debug() {
+  //   const ctx = this.p5
+  //   this.crawl((r, c) => {
+  //     drawLine(
+  //       ctx,
+  //       (c + 0.5) * this.cellSize,
+  //       (r + 0.5) * this.cellSize,
+  //       this.getCell(r, c) ?? -1,
+  //       this.cellSize * 0.5
+  //     );
+  //   });
+  // }
 }
