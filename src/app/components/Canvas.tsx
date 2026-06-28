@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import p5 from "p5";
 import { Grid } from "@/scripts/grid";
-import PoissonDiskSampling from "poisson-disk-sampling";
 import { useMediaQuery } from "../useMediaQuery";
 
 export interface CanvasProps {
@@ -65,6 +64,13 @@ function getBoundingBoxCenter(el: HTMLDivElement | null) {
   return [xCenter, yCenter] as const;
 }
 let OFFSET = 0;
+
+const waveCols = 20;
+const waveRows = 20;
+const amp = 35;
+
+let cLow, cHigh;
+
 export default function Canvas({ shape }: CanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<p5>(null);
@@ -86,48 +92,6 @@ export default function Canvas({ shape }: CanvasProps) {
     if (!instanceRef.current && isDesktop) {
       let grid: Grid;
       instanceRef.current = new p5((sketch) => {
-        // function drawCurve(
-        //   points: { x: number; y: number }[],
-        //   weight: number,
-        //   color: number[]
-        // ) {
-        //   sketch.noFill();
-        //   sketch.stroke(...color);
-        //   sketch.strokeWeight(weight);
-        //   sketch.beginShape();
-        //   points.map((point) => {
-        //     sketch.curveVertex(point.x, point.y);
-        //   });
-        //   sketch.endShape();
-        // }
-
-        // function fieldCurve(
-        //   grid: Grid,
-        //   x: number,
-        //   y: number,
-        //   stepLength: number,
-        //   numSteps: number
-        // ) {
-        //   let p = sketch.createVector(x, y);
-        //   let q = sketch.createVector(x, y);
-        //   let n = numSteps >> 1;
-        //   let curve = [p];
-        //   while (--n > 0) {
-        //     const angle = grid.getField(p.x, p.y);
-        //     const v = sketch.createVector(1, 0).rotate(angle).mult(stepLength);
-        //     p = p.copy().add(v);
-        //     curve.push(p);
-        //   }
-        //   curve = curve.reverse();
-        //   n = numSteps - (numSteps >> 1);
-        //   while (--n > 0) {
-        //     const angle = grid.getField(q.x, q.y);
-        //     const v = sketch.createVector(-1, 0).rotate(angle).mult(stepLength);
-        //     q = q.copy().add(v);
-        //     curve.push(q);
-        //   }
-        //   return curve;
-        // }
         let vert = `
         precision highp float;
 
@@ -193,7 +157,7 @@ export default function Canvas({ shape }: CanvasProps) {
 
             // Cubic Hermine Curve.  Same as SmoothStep()
             vec2 u = f*f*(3.0-2.0*f);
-            // u = smoothstep(0.,1.,f);
+            
 
             // Mix 4 coorners percentages
             return mix(a, b, u.x) +
@@ -222,6 +186,22 @@ export default function Canvas({ shape }: CanvasProps) {
             }
             return F2 - F1;
         }
+
+        // returns rgb = average lit color of the COVERED part, a = fractional coverage
+        vec4 cellSample(vec2 cuv, vec2 cellHalf) {
+            vec3 rgbSum = vec3(0.0);
+            float aSum = 0.0;
+            for (int j = 0; j < 4; j++) {
+                for (int i = 0; i < 4; i++) {
+                    vec2 o = (vec2(float(i), float(j)) / 3.0 - 0.5) * 2.0 * cellHalf;
+                    vec4 tex = texture2D(img, vec2(cuv.x + o.x, 1.0 - (cuv.y + o.y)));
+                    rgbSum += tex.rgb;
+                    aSum   += tex.a;
+                }
+            }
+            vec3 litRGB = aSum > 0.001 ? rgbSum / aSum : vec3(0.0); // guard /0
+            return vec4(litRGB, aSum / 16.0);
+        }
         
         void main() {
             vec2 uv = gl_FragCoord.xy/u_resolution.xy;
@@ -240,17 +220,14 @@ export default function Canvas({ shape }: CanvasProps) {
             vec2 b = vec2(mouseUv.x  * aspect, mouseUv.y);
             // distance from this circle's center to the mouse, in screen space
             float d = distance(a, b);
-            // d *= texture2D(img,vTexCoord).a;
 
-            // float cubeInfluence = texture2D(img, vec2(cellCenter.x, 1.0 - cellCenter.y)).a;
-            // float influence = max(mouseInfluence, cubeInfluence);
-            // float radius = mix(0.025, 1.0, influence);
             
             float mouseInfluence = 1.0 - smoothstep(0.0, 0.1, d);
-            float cubeMask = texture2D(img, vec2(cellCenter.x, 1.0 - cellCenter.y)).a;
-            vec3  cubeRGB  = texture2D(img, vec2(cellCenter.x, 1.0 - cellCenter.y)).rgb;
+            vec2 cellHalf = 0.5 / gridSize;          // half a cell, in uv
+            vec4 s = cellSample(cellCenter, cellHalf);
+            vec3 cubeRGB = s.rgb;
+            float cubeMask = s.a;
 
-            // vec2 flow = vec2(0.15, 0.08) * u_time;
 
             // optional domain warp — makes cell shapes more organic / less geometric
             vec2 warpedUv = uv + vec2(
@@ -283,7 +260,7 @@ export default function Canvas({ shape }: CanvasProps) {
 
             // brightness of this fragment of the cube (luminance)
             float litness = dot(cubeRGB, vec3(0.299, 0.587, 0.114));
-            litness = smoothstep(0.1, 0.9, litness);
+            litness = smoothstep(0.1, 0.75, litness);
             float t = clamp(litness, 0.0, 1.0) * 4.0;
 
             vec3 cubeColor;
@@ -293,122 +270,44 @@ export default function Canvas({ shape }: CanvasProps) {
             else              cubeColor = mix(c3, c4, t - 3.0);
 
             // dots outside the cube use the darkest blue; dots over the cube use the lit palette
-            vec3 dot = mix(c0, cubeColor, cubeMask);
+            float colorMask = texture2D(img, vec2(cellCenter.x, 1.0 - cellCenter.y)).a;
+            vec3 dot = cubeColor; //mix(c0, cubeColor, colorMask);
+
+            float depthVal = texture2D(depth, vec2(cellCenter.x, 1.0 - cellCenter.y)).r;
+            dot *= depthVal;
             
             // vec3 color = vec3(st,0.0);
             vec3 bg = vec3(1.0);
             // vec3 dot = vec3(${COLORS[0][0] / 255.0},${COLORS[0][1] / 255.0},${COLORS[0][2] / 255.0});
-            dot *= texture2D(depth, vTexCoord).r;
+            // dot *= texture2D(depth, vTexCoord).r;
             vec3 color = mix(bg, dot,vec3(circle(st,radius)));
             gl_FragColor = vec4(color,1.0);
 
 
         }
         `;
+
         let layer;
         let dotShader;
-        let shipModel
-        // sketch.preload = () => {
-        // }
+        let shipModel;
         sketch.setup = () => {
-          shipModel = sketch.loadModel('/assets/models/model.obj', true)
+          shipModel = sketch.loadModel("/assets/models/model.obj", true);
           const dpr = window.devicePixelRatio || 1;
           sketch.pixelDensity(dpr);
           sketch.createCanvas(MAX_WIDTH, MAX_HEIGHT, sketch.WEBGL);
-          // sketch.canvas.width = Math.floor(MAX_WIDTH * dpr)
-          // sketch.canvas.height = Math.floor(MAX_HEIGHT * dpr)
-          // sketch.scale(1.75);
+
           grid = new Grid(MAX_HEIGHT, MAX_WIDTH, CELL_SIZE, sketch);
-          // sketch.noLoop();
-          // sketch.frameRate(60);
-          // origins = poissonSampling(LINE_COUNT, MAX_WIDTH, MAX_HEIGHT);
+          sketch.frameRate(60);
           layer = sketch.createFramebuffer();
           dotShader = sketch.createShader(vert, frag);
           grid.update({ size: 2, color: COLORS[2] });
+
+          sketch.noiseDetail(4, 0.5)
+          cLow = sketch.color(COLORS[0]);
+          cHigh = sketch.color(COLORS[4]);
         };
 
-        function animateScaleWithMousePos(r: number, c: number) {
-          const x = CELL_SIZE * c + CELL_SIZE / 2;
-          const y = CELL_SIZE * r + CELL_SIZE / 2;
-          const threshold = CELL_SIZE * 1.125;
-          const circ = Math.sqrt(
-            Math.abs(sketch.mouseX - x) ** 2 + Math.abs(sketch.mouseY - y) ** 2,
-          );
-          const cell = grid.getCell(r, c);
-          if (circ <= threshold) {
-            // grid.setCell(r, c, );
-            // size = MAX_SIZE;
-            grid.setCell(r, c, {
-              size: MAX_SIZE,
-              color: cell?.color ?? COLORS[4],
-            });
-          } else {
-            // grid.setCell(r, c, sketch.lerp(cell, MIN_SIZE, 0.35));
-            // size = sketch.lerp(cell, MIN_SIZE, 0.35);
-            grid.setCell(r, c, {
-              size: sketch.lerp(cell?.size, MIN_SIZE, 0.35),
-              color: cell?.color ?? COLORS[1],
-            });
-          }
-        }
-
-        function drawSineWave(r: number, c: number, offset: number) {
-          const mouseYMap = sketch.map(
-            mouseRef.current.y,
-            0,
-            window.innerHeight,
-            0,
-            MAX_HEIGHT / CELL_SIZE - 1,
-          );
-          const mouseXMap = sketch.map(
-            mouseRef.current.x,
-            0,
-            window.innerWidth,
-            0.25,
-            1,
-          );
-          // draw the wave
-          const wave = sketch.map(
-            sketch.sin(offset * mouseXMap),
-            -1,
-            1,
-            MAX_HEIGHT / CELL_SIZE - 1 - mouseYMap,
-            mouseYMap,
-          );
-
-          // if current cell is within half a thing of the wave form
-          if (Math.abs(r - wave) <= 0.5) {
-            grid.setCell(r, c, {
-              size: MAX_SIZE,
-              color: COLORS[3],
-            });
-          } else {
-            grid.setCell(r, c, {
-              size: grid.getCell(r, c)?.size ?? 2,
-              color: COLORS[1],
-            });
-          }
-        }
-
-        function drawDot(r: number, c: number) {
-          const x = CELL_SIZE * c + CELL_SIZE / 2 - MAX_WIDTH / 2;
-          const y = CELL_SIZE * r + CELL_SIZE / 2 - MAX_HEIGHT / 2;
-          const cell = grid.getCell(r, c);
-          let color = cell?.color ?? COLORS[1];
-          let size = cell?.size ?? MIN_SIZE;
-          if (DEBUG_COLORS) {
-            if (r === 0 && c < COLORS.length) {
-              color = COLORS[c];
-              size = MAX_SIZE;
-            }
-          }
-          sketch.fill(sketch.color(...color));
-          sketch.noStroke();
-          sketch.circle(x, y, size);
-        }
-
         function draw3DShape(shape: () => void) {
-          const speed = sketch.deltaTime * 0.05;
           layer.begin();
           sketch.clear();
           sketch.push();
@@ -420,57 +319,98 @@ export default function Canvas({ shape }: CanvasProps) {
             -(sketch.width / 2) * 0.5,
             (sketch.height / 2) * 0.5,
             -40, // direction,
-            255
+            255,
           );
           sketch.fill(sketch.color(COLORS[4]));
+          sketch.noStroke();
           shape();
           sketch.pop();
           layer.end();
         }
         function drawCube() {
-          const speed = sketch.deltaTime * 0.05;
+          const speed = sketch.frameCount * 0.005;
           draw3DShape(() => {
             sketch.rotateX(-0.4);
-            sketch.rotateY(-(speed + OFFSET * 0.5));
+            sketch.rotateY(-(speed + OFFSET * 0.25));
             sketch.scale(2.0);
             sketch.box();
           });
         }
         function drawTorus() {
-          const speed = sketch.deltaTime * 0.05;
+          const speed = sketch.frameCount * 0.005;
           draw3DShape(() => {
             sketch.rotateX(-0.4);
             sketch.rotateY(-(speed + OFFSET * 0.5));
-            // sketch.scale(2.0);
             sketch.torus();
           });
         }
         function drawShip() {
-          const speed = sketch.deltaTime * 0.05;
+          const speed = sketch.frameCount * 0.005;
           draw3DShape(() => {
             sketch.rotateX(2.85);
-            sketch.rotateY((speed + OFFSET * 0.5));
+            sketch.rotateY(speed + OFFSET * 0.25);
             sketch.scale(0.65);
             sketch.model(shipModel);
           });
         }
 
+        function waveShape() {
+          sketch.rotateX(sketch.PI / 5);
+          sketch.scale(1.25);
+          const t = sketch.frameCount * 0.025;
+          for (let y = 0; y < waveRows; y++) {
+            sketch.beginShape(sketch.TRIANGLE_STRIP);
+            for (let x = 0; x <= waveCols; x++) {
+              addVertex(x, y, t);
+              addVertex(x, y + 1, t);
+            }
+            sketch.endShape();
+          }
+        }
+
+        function drawWave() {
+          draw3DShape(() => {
+            waveShape();
+          });
+        }
+
+        function addVertex(ix: number, iy: number, t: number) {
+          const px = sketch.map(ix, 0, waveCols, -MAX_WIDTH / 2, MAX_WIDTH / 2);
+          const py = sketch.map(
+            iy,
+            0,
+            waveRows,
+            -MAX_HEIGHT / 2,
+            MAX_HEIGHT / 2,
+          );
+
+          const freq = 0.025;
+
+          const warp = (sketch.noise(px * 0.006 + 100, py * 0.010 - t * 0.15) - 0.5) * 2
+          const xw = px + warp * 80
+          const wave = sketch.sin(xw * freq - t) * amp + sketch.sin(xw * 0.013 - t * 1.3) * amp * 0.5
+
+          const chop = (sketch.noise(px * 0.030 - t * 0.5, py * 0.030) - 0.5) * 2
+
+          const z = wave + chop * amp * 0.25
+
+          const h = sketch.constrain(sketch.map(z, -amp, amp, 0, 1), 0, 1);
+          sketch.fill(sketch.lerpColor(cLow, cHigh, h));
+          sketch.vertex(px, py, z);
+        }
+
         sketch.draw = () => {
-          const speed = sketch.deltaTime * 0.05;
-          // sketch.background(20);
           sketch.clear();
           if (shape === "cube") {
             drawCube();
-          }
-          if (shape === "torus") {
+          } else if (shape === "torus") {
             drawTorus();
-          }
-          if (shape === "ship") {
+          } else if (shape === "ship") {
             drawShip();
+          } else {
+            drawWave();
           }
           // SHADER START
-          // sketch.image(layer, -MAX_WIDTH / 2, -MAX_HEIGHT / 2);
-
           sketch.push();
           sketch.shader(dotShader);
           dotShader.setUniform("u_resolution", [
@@ -487,23 +427,12 @@ export default function Canvas({ shape }: CanvasProps) {
           sketch.noStroke();
           sketch.plane(MAX_WIDTH, MAX_HEIGHT);
           sketch.pop();
-          // SHADER END
-          // const pixels = layer.loadPixels();
-          // console.log('pixels', pixels)
-          // sketch.rotateX(0);
-          // grid.crawl((r, c) => {
-          //   const offset = c - speed + OFFSET;
-          //   const x = CELL_SIZE * c + CELL_SIZE / 2; // - MAX_WIDTH / 2;
-          //   const y = CELL_SIZE * r + CELL_SIZE / 2; // - MAX_HEIGHT / 2;
-          //   // const pixel = layer.get(x, y);
-          //   // if (!pixel.includes(0)) {
-          //   //   grid.setCell(r, c, { size: MAX_SIZE, color: pixel });
-          //   // }
-          //   // console.log('pixel', pixel)
-          //   // drawSineWave(r, c, offset);
-          //   // animateScaleWithMousePos(r, c);
-          //   // drawDot(r, c);
-          // });
+
+          // for debugging the wave shape
+          // sketch.push();
+          // waveShape();
+          // sketch.pop();
+
           OFFSET += 0.1;
         };
       }, canvasRef.current ?? undefined);
@@ -522,18 +451,6 @@ export default function Canvas({ shape }: CanvasProps) {
     <div
       ref={canvasRef}
       className="w-[496px] h-[192px] relative"
-      // className="w-full h-full relative rounded-lg overflow-hidden shadow-inner"
     />
   ) : null;
-}
-
-function poissonSampling(n: number, width: number, height: number) {
-  const d = width / Math.sqrt((n * height) / width);
-  const pds = new PoissonDiskSampling({
-    shape: [width, height],
-    minDistance: d * 0.8,
-    maxDistance: d * 1.6,
-    tries: 15,
-  });
-  return pds.fill();
 }
